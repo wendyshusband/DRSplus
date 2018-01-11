@@ -1,6 +1,5 @@
-package resa.shedding.example;
+ package resa.shedding.example;
 
-import org.jetbrains.annotations.TestOnly;
 import redis.clients.jedis.Jedis;
 import resa.shedding.basicServices.api.AbstractTotalCost;
 import resa.shedding.tools.TestRedis;
@@ -20,7 +19,8 @@ public class FPAndODCost extends AbstractTotalCost {
 
     private static double odAccuracySensitive(double shedCost) {
         //double res = 0.93298262 * Math.exp(-1 * 4.91578576 * shedCost) + 0.06391202;
-        double res = -1.1 * shedCost + 0.87;
+        double res =  1.26652722 * Math.exp(-1 * 1.81615502 * shedCost) - 0.25757112;
+        //double res = -1.1 * shedCost + 0.87;
         System.out.println(shedCost+"accuracytianshichibang:"+res);
         if (res <= threshold) {
             return Double.MAX_VALUE;
@@ -30,7 +30,8 @@ public class FPAndODCost extends AbstractTotalCost {
 
     private static double fpAccuracySensitive(double shedCost) {
         //double res = -0.95625272727 * shedCost + 0.851328;
-        double res = -1 * shedCost + 0.81;
+        //double res = -1 * shedCost + 0.81;
+        double res = -0.86 * shedCost + 0.71;
         System.out.println("accuracytianshichibang:"+res);
         if (res < threshold) {
             return Double.MAX_VALUE;

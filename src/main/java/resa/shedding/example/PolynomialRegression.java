@@ -28,7 +28,7 @@ public class PolynomialRegression extends LearningModel {
         obs.add( 0.7,0.07);
         obs.add( 0.8,0.02);
         obs.add( 0.9,0.01);
-        obs.add( 0.0,1.0);
+        //obs.add( 0.0,1.0);
         //obs.add(0,0);obs.add(0,0);obs.add(0,0);obs.add(0,0);obs.add(0,0);obs.add(0,0);
         // Instantiate a third-degree polynomial fitter.
         final PolynomialCurveFitter fitter = PolynomialCurveFitter.create(1);

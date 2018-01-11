@@ -12,7 +12,7 @@ public class ExamCostFunc implements ICostFunction {
     @Override
     public AbstractTotalCost calcCost(AllocationAndActiveShedRatios args) {
         double alloCost = args.getFixedAllocation().values().stream().mapToDouble(Number::doubleValue).sum();
-        double shedCost = args.getActiveShedRates().values().stream().mapToDouble(Number::doubleValue).sum();
+        double shedCost = args.getActiveShedRatios().values().stream().mapToDouble(Number::doubleValue).sum();
         System.out.println(alloCost+" examplecostfunction "+shedCost);
         return new ExamCost(alloCost, shedCost);
     }

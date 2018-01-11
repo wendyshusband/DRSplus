@@ -32,7 +32,7 @@ public class OutdetCostFunc implements ICostFunction {
     @Override
     public AbstractTotalCost calcCost(AllocationAndActiveShedRatios args) {
         double alloCost = args.getFixedAllocation().values().stream().mapToDouble(Number::doubleValue).sum();
-        double shedCost = args.getActiveShedRates().values().stream().mapToDouble(Number::doubleValue).sum();
+        double shedCost = args.getActiveShedRatios().values().stream().mapToDouble(Number::doubleValue).sum();
         //return new OutdetCost(alloCost, powerFunc(shedCost));
         return new OutdetCost(alloCost, powerFunc(shedCost));
     }

@@ -3,6 +3,7 @@ package resa.optimize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Map;
  * Modified by Tom Fu on 21-Dec-2015, for new DisruptQueue Implementation for Version after storm-core-0.10.0
  * Functions involving queue-related metrics in the current class will be affected:
  */
-public class ServiceNode {
+public class ServiceNode implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceNode.class);
 
     protected String componentID;
@@ -41,8 +42,8 @@ public class ServiceNode {
     /*load shedding*/
     //tkl
     protected double passiveSheddingRate;
-    protected Map<String,Long> emitCount;
-    protected Map<String, Long> passiveSheddingCountMap;
+    protected HashMap<String,Long> emitCount;
+    protected HashMap<String, Long> passiveSheddingCountMap;
     protected long dropCount = 0;
     protected long allCount = 0;
     protected long dropFrequency = 0;
@@ -87,8 +88,8 @@ public class ServiceNode {
         }else {
             this.passiveSheddingRate = -1;
         }
-        this.passiveSheddingCountMap = ar.getPassiveSheddingCountMap();
-        this.emitCount = ar.getemitCount();
+        this.passiveSheddingCountMap = (HashMap<String, Long>) ar.getPassiveSheddingCountMap();
+        this.emitCount = (HashMap<String, Long>) ar.getemitCount();
         LOG.info(ar.getArrivalRatePerSec()+":"+executorNumber+"ServiceNode is created: " + toString());
     }
 
@@ -205,5 +206,13 @@ public class ServiceNode {
                 numCompleteTuples, sumDurationSeconds, compSampleRate, avgSendQueueLength, avgRecvQueueLength,
                 lambda, interArrivalScv, ratio, rho, passiveSheddingRate , exArrivalRate)
                 +" dropFrequency: "+dropFrequency+" emitcount: "+emitCount+" tupleMessage: "+passiveSheddingCountMap;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        ServiceNode clone = (ServiceNode) super.clone();
+        clone.emitCount = (HashMap<String, Long>) emitCount.clone();
+        clone.passiveSheddingCountMap = (HashMap<String, Long>) passiveSheddingCountMap.clone();
+        return clone;
     }
 }

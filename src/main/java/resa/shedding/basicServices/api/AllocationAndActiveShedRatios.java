@@ -29,7 +29,7 @@ public class AllocationAndActiveShedRatios {
         this.fixedAllocation = fixedAllocation;
     }
 
-    public Map<String, Double> getActiveShedRates() {
+    public Map<String, Double> getActiveShedRatios() {
         return activeShedRatios;
     }
 
