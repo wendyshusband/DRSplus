@@ -1,6 +1,7 @@
 package TestTopology;
 
 import TestTopology.fp.WordList;
+import TestTopology.testforls.TestWRInputFileForRedis;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import resa.shedding.tools.TestRedis;
@@ -217,12 +218,15 @@ public class DataCleaning {
 
     @Test
     public void get() throws IOException {
-        Jedis jedis = TestRedis.getJedis();
-        FileReader fileReader = new FileReader("E:/123123.txt");
-        BufferedReader reader = new BufferedReader(fileReader);
-        String s ;
-        while ((s = reader.readLine()) != null) {
-            jedis.rpush("vector", String.valueOf(Double.valueOf(s)));
-        }
+//        Jedis jedis = TestRedis.getJedis();
+//        FileReader fileReader = new FileReader("E:/123123.txt");
+//        BufferedReader reader = new BufferedReader(fileReader);
+//        String s ;
+//        while ((s = reader.readLine()) != null) {
+//            jedis.rpush("vector", String.valueOf(Double.valueOf(s)));
+//        }
+        double maxDelay = Integer.MIN_VALUE;
+        System.out.println(maxDelay);
+        System.out.println(-Double.MIN_VALUE);
     }
 }

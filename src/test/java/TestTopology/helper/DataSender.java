@@ -81,8 +81,8 @@ public class DataSender {
             String line;
             int batchCnt = 0;
             while ((line = reader.readLine()) != null) {
-                //dataQueue.put(processData(line));
-                dataQueue.put(fixAndProcessData((count % rem),line, getTime(count % rem)));
+                dataQueue.put(processData(line));
+                //dataQueue.put(fixAndProcessData((count % rem),line, getTime(count % rem)));
                 count++;
                 if (++batchCnt == batchSize) {
                     batchCnt = 0;

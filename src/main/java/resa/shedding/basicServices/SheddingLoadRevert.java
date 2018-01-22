@@ -29,10 +29,12 @@ public class SheddingLoadRevert {
                               Map<String, Object> targets, Map<String, double[]> selectivityFunctions) {
         topology = stormTopology;
         topologyTargets.putAll(targets);
-//        System.out.println(targets+"realtargets:"+topologyTargets);
-//        Map<String, ArrayList<String>> detector = (Map<String, ArrayList<String>>) topologyTargets.get("detector");
-//        detector.remove("feedback");
-//        System.out.println(targets+"fakerealtargets:"+topologyTargets);
+        //for test
+        System.out.println(targets+"realtargets:"+topologyTargets);
+        Map<String, ArrayList<String>> detector = (Map<String, ArrayList<String>>) topologyTargets.get("detector");
+        detector.remove("feedback");
+        System.out.println(targets+"fakerealtargets:"+topologyTargets);
+        //end for test
         topologyTargets.entrySet().stream().filter(e -> topology.get_bolts().containsKey(e.getKey())).forEach(e->{
             revertRealLoadDatas.put(e.getKey(),new RevertRealLoadData(e.getKey()));
         });

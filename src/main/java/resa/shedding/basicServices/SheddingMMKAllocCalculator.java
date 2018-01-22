@@ -194,16 +194,6 @@ public class  SheddingMMKAllocCalculator extends SheddingAllocCalculator {
      * calculate selectivity function based on bolt history data.
      * */
     private Map<String, double[]> calcSelectivityFunction() {
-//        spoutHistoricalData.compHistoryResults.entrySet().forEach(e->{
-//            System.out.println(e.getKey());
-//            Iterator iterator = ((Queue)e.getValue()).iterator();
-//            while(iterator.hasNext()){
-//                SpoutAggResult tempAggResult = (SpoutAggResult) iterator.next();
-//                System.out.println("completeLatency: "+tempAggResult.getScvTupleCompleteLatency());
-//                System.out.println(tempAggResult.getArrivalRatePerSec());
-//                System.out.println("getTupleEmitRateOnSQ"+tempAggResult.getArrivalRatePerSec() * currAllocation.get(e.getKey()) / 2.0);
-//            }
-//        });
         Map<String, double[]> selectivityCoeffs = new HashMap<>();
         Map<String, Queue<AggResult>> compHistoryResults =boltHistoricalData.compHistoryResults;
 
@@ -226,7 +216,6 @@ public class  SheddingMMKAllocCalculator extends SheddingAllocCalculator {
                         if (emitSum != 0) {
                             loadOUT = emitSum;
                         }
-                        //System.out.println(loadTuple+" ::~:: "+emitSum);
                     }
                 }
                 loadPairList.add(new Pair<>(loadIN,loadOUT));
@@ -235,17 +224,6 @@ public class  SheddingMMKAllocCalculator extends SheddingAllocCalculator {
             double[] oneCompSelectivityCoeff = calcSelectivityFunction.Fit(loadPairList,order,false);
             selectivityCoeffs.put((String) comp.getKey(),oneCompSelectivityCoeff);
         }
-
-//        for (Map.Entry comp : selectivityCoeffs.entrySet()) {
-//            System.out.println((String) comp.getKey());
-//            double[] value = (double[]) comp.getValue();
-//            System.out.print("Selectivity func: {");
-//            for(int i=0; i<value.length; i++){
-//                System.out.print(String.valueOf(value[i])+",");
-//            }
-//            System.out.println("}");
-//        }
-
         return selectivityCoeffs;
     }
 
