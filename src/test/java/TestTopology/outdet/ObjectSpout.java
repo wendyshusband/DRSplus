@@ -35,15 +35,15 @@ public class ObjectSpout extends RedisQueueSpout {
         Integer objId = (int) (Long.parseLong(tmp[0]) % objectCount);
         Long timestamp = Long.parseLong(tmp[1]);
 
-        int a;
-        String s = jedis.get("time");
-        a = Integer.valueOf(s);
-        a++;
-        try {
-            TestRedis.add("time", String.valueOf(a));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        int a;
+//        String s = jedis.get("time");
+//        a = Integer.valueOf(s);
+//        a++;
+//        try {
+//            TestRedis.add("time", String.valueOf(a));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         //collector.emit(new Values(objId, v, timestamp), id++);
         collector.emit(new Values(objId, v, timestamp), Collections.singletonMap(objId, timestamp));
     }

@@ -157,7 +157,7 @@ public class  SheddingMMKAllocCalculator extends SheddingAllocCalculator {
         if (enableActiveShedding) {
             //shedRateAndAllocResult = serviceModel.checkOptimizedWithActiveShedding(spInfo, queueingNetwork,
             //        completeTimeMilliSecUpper, completeTimeMilliSecLower, boltAllocation, maxThreadAvailable4Bolt, currentUsedThreadByBolts, resourceUnit, tolerant, messageTimeOut, selectivityFunctions, targets);
-            shedRateAndAllocResult = serviceModel.checkOptimizedWithShedding(spInfo, queueingNetwork, completeTimeMilliSecUpper, completeTimeMilliSecLower,
+            shedRateAndAllocResult = serviceModel.checkOptimizedWithShedding(conf, spInfo, queueingNetwork, completeTimeMilliSecUpper, completeTimeMilliSecLower,
                     boltAllocation, maxThreadAvailable4Bolt, currentUsedThreadByBolts, resourceUnit, tolerant, messageTimeOut, selectivityFunctions,
                     calcAdjRatioFunction, targets, sheddingLoadRevert.getRevertRealLoadDatas(), costFunction, costClassName, systemModel);
         } else {

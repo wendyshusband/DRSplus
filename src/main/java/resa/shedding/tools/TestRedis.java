@@ -33,6 +33,7 @@ public class TestRedis {
         }
         //jedisPool = new JedisPool(config, addr.getHostAddress(), 6379,100000000);
         jedisPool = new JedisPool(config, "10.21.50.43", 6379,100000000);
+        //jedisPool = new JedisPool(config, "10.21.25.17", 6379,100000000);
     }
 
     public synchronized static Jedis getJedis() {
@@ -62,7 +63,7 @@ public class TestRedis {
     /**
      * search
      */
-    public String  find(String key,String value){
+    public String find(String key,String value){
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
@@ -170,26 +171,26 @@ public class TestRedis {
 //            }
 //        }
 //        System.out.println("ok!");
-        int i = 1;
-        try {
-            TestRedis.add("time", String.valueOf(0));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        while(i<1000) {
-            int a;
-            String ss = jedis.get("time");
-
-            a = Integer.valueOf(ss);
-            a++;
-            System.out.println(ss+" a: "+a);
-            try {
-                TestRedis.add("time", String.valueOf(a));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            i++;
-        }
+//        int i = 1;
+//        try {
+//            TestRedis.add("time", String.valueOf(0));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        while(i<1000) {
+//            int a;
+//            String ss = jedis.get("time");
+//
+//            a = Integer.valueOf(ss);
+//            a++;
+//            System.out.println(ss+" a: "+a);
+//            try {
+//                TestRedis.add("time", String.valueOf(a));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            i++;
+//        }
     }
 }
 

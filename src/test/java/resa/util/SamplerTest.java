@@ -8,10 +8,10 @@ import org.junit.Test;
 public class SamplerTest {
     @Test
     public void shoudSample() throws Exception {
-        Sampler sampler = new Sampler(1);
-        for(int i=100;i>0; i--){
-            System.out.println(sampler.shoudSample());
-        }
+//        Sampler sampler = new Sampler(1);
+//        for(int i=100;i>0; i--){
+//            System.out.println(sampler.shoudSample());
+//        }
     }
 
     @Test

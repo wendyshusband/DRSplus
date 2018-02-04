@@ -7,6 +7,7 @@ import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Tuple;
+import resa.util.ConfigUtil;
 
 import java.util.*;
 
@@ -19,6 +20,9 @@ public class UpdaterSleep extends TASleepBolt {
     private Map<String, List<BitSet>> padding;
     private int projectionSize;
     private int taskid;
+    private int fixMu;
+    private String name;
+    private int tupleReceiveCount = 0;
 
     public UpdaterSleep(int projectionSize, IntervalSupplier sleep) {
         super(sleep);
@@ -30,11 +34,18 @@ public class UpdaterSleep extends TASleepBolt {
         this.collector = collector;
         padding = new HashMap<>();
         taskid = context.getThisTaskId();
+        this.name = context.getThisComponentId();
+        String fixmuconf = "test.fixmu."+name;
+        this.fixMu = ConfigUtil.getInt(stormConf, fixmuconf, 1);
+        LOG.info("UpdaterSleep is prepared and "+fixmuconf+" is "+fixMu);
     }
 
     @Override
     public void execute(Tuple input) {
-        super.execute(input);
+        tupleReceiveCount++;
+        if (tupleReceiveCount % fixMu == 0) {
+            super.execute(input);
+        }
         //System.out.println("updaterfacaila:"+taskid);
         String key = input.getValueByField(ObjectSpoutSleep.TIME_FILED) + "-" + input.getValueByField(ObjectSpoutSleep.ID_FILED);
         List<BitSet> ret = padding.get(key);

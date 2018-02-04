@@ -60,16 +60,19 @@ public class ResaConfig extends Config {
     public static final String SPOUT_PENDING_THRESHOLD = "resa.spout.pending.threshold";
     public static final String CALC_COST_FUNC_CLASS = "resa.calc.cost.func.class";
     public static final String COST_CLASS = "resa.cost.class";
-   // public static final String SHEDDING_ACTIVE_RATE_UNIT = "resa.active.shedding.rate.unit";
+    public static final String SHEDDING_ACTIVE_RATIO_UNIT = "resa.active.shedding.ratio.unit";
     public static final String ACTIVE_SHEDDING_ADJUSTRATIO_BIAS_THRESHOLD = "resa.active.shedding.adjustRatio.bias.threshold";
     public static final String ADJRATIO_CALC_CLASS = "resa.shedding.adjustratio.calc.class";
     public static final String ACTIVE_SHEDDINGRATE_TRIM_INCREMENT = "resa.active.sheddingrate.trim.increment";
+    public static final String LATENCY_DIFFERENCE_THRESHOLD_UNDER_ACTIVE_SHEDDING_STATUS = "resa.latency.difference.threshold";
+    public static final String SHEDDING_ADJUSTRATIO_HISTORY_SIZE = "resa.shedding.adjustRatio.history.size";
+    public static final String SHEDDING_ADJUSTRATIO_FUNCTION_ORDER = "resa.shedding.adjustRatio.function,order";
+    public static final String SHEDDING_ADJUSTRATIO_LEARNLING_THRESHOLD = "resa.shedding.adjustRatio.learning.threshold";
+    public static final String SHEDDING_ADJUSTRATIO_DEVIATION_RATIO = "resa.shedding.adjustRatio.deviation.ratio";
     //RED
     public static final String HIGH_SHEDDING_THRESHOLD = "resa.shedding.high.thresdhold";
     public static final String LOW_SHEDDING_THRESHOLD = "resa.shedding.low.thresdhold";
     public static final String MAX_SHED_RATE = "resa.max.shed.rate";
-    public static final String LATENCY_DIFFERENCE_THRESHOLD_UNDER_ACTIVE_SHEDDING_STATUS = "resa.latency.difference.threshold";
-
 
     private ResaConfig(boolean loadDefault) {
         if (loadDefault) {

@@ -8,6 +8,7 @@ import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
+import resa.util.ConfigUtil;
 
 import java.util.Arrays;
 import java.util.BitSet;
@@ -40,6 +41,10 @@ public class DetectorSleep extends TASleepBolt {
     private Map<Integer, Context> objectContext;
     private OutputCollector collector;
     private int taskid;
+    private int fixMu;
+    private String name;
+    private int tupleReceiveCount = 0;
+
     public DetectorSleep(int objectCount, int minNeighborCount, double maxNeighborDistance, IntervalSupplier sleep) {
         super(sleep);
         this.objectCount = objectCount;
@@ -52,12 +57,18 @@ public class DetectorSleep extends TASleepBolt {
         objectContext = new HashMap<>();
         this.collector = collector;
         taskid = context.getThisTaskId();
+        this.name = context.getThisComponentId();
+        String fixmuconf = "test.fixmu."+name;
+        this.fixMu = ConfigUtil.getInt(stormConf, fixmuconf, 1);
+        LOG.info("DetectorSleep is prepared and "+fixmuconf+" is "+fixMu);
     }
 
     @Override
     public void execute(Tuple input) {
-        //System.out.println("detectorfacaila:"+taskid);
-        super.execute(input);
+        tupleReceiveCount++;
+        if (tupleReceiveCount % fixMu == 0) {
+            super.execute(input);
+        }
         Integer projId = input.getIntegerByField(ProjectionSleep.PROJECTION_ID_FIELD);
         Context context = objectContext.get(projId);
         if (context == null) {

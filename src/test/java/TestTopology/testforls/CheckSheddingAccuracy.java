@@ -705,12 +705,13 @@ public class CheckSheddingAccuracy {
     }
     @Test
     public void reWuwan() {
-        List fulldatas = TestWRInputFileForRedis
-                .readFileByLine("/tmp/wuwan50", 100000);
-        for (int i= fulldatas.size()-1; i>=0; i--) {
-            String t = (String) fulldatas.get(i)+"\n";
-            TestWRInputFileForRedis.appendFile("/home/tkl/wuwannew50",t.getBytes(),1);
-        }
-
+//        List fulldatas = TestWRInputFileForRedis
+//                .readFileByLine("/tmp/fp", 1000000);
+//        for (int i= fulldatas.size()-1; i>=0; i--) {
+//            String t = (String) fulldatas.get(i)+"\n";
+//            TestWRInputFileForRedis.appendFile("/home/tkl/fpall",t.getBytes(),1);
+//        }
+        double res =  1.11756217 * Math.exp(-1 * 2.15941776 * 0.26) - 0.16101833;
+        System.out.println(res);
     }
 }

@@ -72,11 +72,19 @@ public class DataSender {
 
     public void send2Queue(Path inputFile, int batchSize, LongSupplier sleep, String[] args) throws IOException, InterruptedException {
         BlockingQueue<String> dataQueue = new ArrayBlockingQueue<>(10000);
+        double lambda = Float.parseFloat(args[4]);
         int rem = Integer.valueOf(args[5]);
+        int denominator = 1;
+        if (args.length > 6) {
+            denominator = Integer.valueOf(args[6]);
+        }
+
+        System.out.println(lambda+"datasender denominator is "+denominator);
+
         for (int i = 0; i < 3; i++) {
             new PushThread(dataQueue).start();
         }
-        int count = 1;
+        int count = 0;
         try (BufferedReader reader = Files.newBufferedReader(inputFile)) {
             String line;
             int batchCnt = 0;
@@ -87,7 +95,7 @@ public class DataSender {
                 if (++batchCnt == batchSize) {
                     batchCnt = 0;
                     long ms = sleep.getAsLong();
-                    if (ms > 0) {
+                    if (ms > 0 && (count % denominator == 0)) {
                         Utils.sleep(ms);
                     }
                 }

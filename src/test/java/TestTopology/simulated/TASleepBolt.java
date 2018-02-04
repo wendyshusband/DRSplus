@@ -7,7 +7,11 @@ import org.apache.storm.topology.base.BaseRichBolt;
 import org.apache.storm.tuple.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
+import resa.shedding.tools.TestRedis;
+import resa.util.ConfigUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,6 +21,8 @@ public abstract class TASleepBolt extends BaseRichBolt {
 
     protected transient OutputCollector collector;
     private IntervalSupplier sleep;
+
+
     public static final Logger LOG = LoggerFactory.getLogger(TASleepBolt.class);
 
     public TASleepBolt(IntervalSupplier sleep) {
@@ -34,13 +40,13 @@ public abstract class TASleepBolt extends BaseRichBolt {
     @Override
     public void prepare(Map map, TopologyContext context, OutputCollector outputCollector) {
         this.collector = outputCollector;
-        LOG.info("TASleepBolt is prepared."+sleep.get());
+        LOG.info("TASleepBolt is prepared. sleep time is "+sleep.get());
     }
 
     @Override
     public void execute(Tuple tuple) {
+
         long inter = this.sleep.get();
-        //System.out.println("inter shiduoshao: "+inter);
         if (inter > 0) {
             performSleep(inter);
         }

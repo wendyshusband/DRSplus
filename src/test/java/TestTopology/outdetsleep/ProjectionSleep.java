@@ -8,6 +8,7 @@ import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
+import resa.util.ConfigUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,11 @@ public class ProjectionSleep extends TASleepBolt {
     private List<double[]> randomVectors;
     private transient OutputCollector collector;
 
+    private int taskid;
+    private int fixMu;
+    private String name;
+    private int tupleReceiveCount = 0;
+
     public ProjectionSleep(List<double[]> randomVectors, IntervalSupplier sleep) {
         super(sleep);
         this.randomVectors = randomVectors;
@@ -33,11 +39,19 @@ public class ProjectionSleep extends TASleepBolt {
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.collector = collector;
+        taskid = context.getThisTaskId();
+        this.name = context.getThisComponentId();
+        String fixmuconf = "test.fixmu."+name;
+        this.fixMu = ConfigUtil.getInt(stormConf, fixmuconf, 1);
+        LOG.info("ProjectionSleep is prepared and "+fixmuconf+" is "+fixMu);
     }
 
     @Override
     public void execute(Tuple input) {
-        super.execute(input);
+        tupleReceiveCount++;
+        if (tupleReceiveCount % fixMu == 0) {
+            super.execute(input);
+        }
         //System.out.println(a+"projection: "+(a * 1000.0)/ (System.currentTimeMillis() - start));
         Object objId = input.getValueByField(ObjectSpoutSleep.ID_FILED);
         Object time = input.getValueByField(ObjectSpoutSleep.TIME_FILED);

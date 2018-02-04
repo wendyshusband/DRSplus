@@ -27,6 +27,9 @@ public class FrequentPatternTopologySleep implements Constant {
         }
         ResaConfig resaConfig = ResaConfig.create();
         resaConfig.putAll(conf);
+        TestRedis.add("type", "fp");
+        TestRedis.add("rebalance","0");
+        TestRedis.add("time", String.valueOf(0));
         int checktype = Integer.valueOf((Integer) conf.get("test.shedding.or.not"));
         TopologyBuilder builder = null;
         if (checktype == 0) {
@@ -81,9 +84,7 @@ public class FrequentPatternTopologySleep implements Constant {
 //            System.out.println("RedisMetricsCollector is registered");
 //        }
         //resaConfig.setDebug(true);
-        TestRedis.add("type", "fp");
-        TestRedis.add("rebalance","0");
-        TestRedis.add("time", String.valueOf(0));
+
         StormSubmitter.submitTopology(args[0], resaConfig, builder.createTopology());
         //LocalCluster localCluster = new LocalCluster();
         //localCluster.submitTopology(args[0], resaConfig, builder.createTopology());

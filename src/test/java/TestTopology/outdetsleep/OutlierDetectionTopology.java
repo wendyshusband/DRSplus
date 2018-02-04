@@ -35,41 +35,18 @@ public class OutlierDetectionTopology {
     @Test
     public void add() {
         Jedis jedis = TestRedis.getJedis();
-        List<double[]> v = OutlierDetectionTopology.generateRandomVectors(34,13);
+        List<double[]> v = OutlierDetectionTopology.generateRandomVectors(34,20);
         for (int i=0; i<v.size(); i++) {
             System.out.println(v.size()+"~"+v.get(i).length);
             for (int j=0; j<v.get(i).length; j++) {
                 jedis.lpush("vector", String.valueOf(v.get(i)[j]));
             }
         }
-//        List<double[]> v = getDefineVectors();
-//        System.out.println(v.size());
-//        List<double[]> v = new ArrayList<>();
-//        for (int k=0; k<=2; k++) {
-//            for (int i = 0; i < 5; i++) {
-//                double[] temp = new double[34];
-//                for (int j = 0; j < 34; j++) {
-//                    double t = Double.valueOf(jedis.lpop("vector"));
-//                    temp[j] = t;
-//                    jedis.rpush("vector", String.valueOf(t));
-//                }
-//                v.add(temp);
-//            }
-//
-//            //jedis.rpush("vector", jedis.lpop("vector"));
-//            for (int i = 0; i < 5; i++) {
-//                for (int j = 0; j < 34; j++) {
-//                    System.out.print(v.get(i)[j] + ' ');
-//                }
-//                System.out.println();
-//            }
-//            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-//        }
     }
     @Test
     public void get() {
         Jedis jedis = TestRedis.getJedis();
-        for (int i=0; i<13;i++) {
+        for (int i=0; i<20;i++) {
             for (int j=0; j<34; j++) {
                 String t = jedis.lpop("vector");
                 jedis.rpush("vector",t);
@@ -83,7 +60,7 @@ public class OutlierDetectionTopology {
     public static List<double[]> getDefineVectors(){
         Jedis jedis = TestRedis.getJedis();
         List<double[]> v = new ArrayList<>();
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i < 20; i++) {
             double[] temp = new double[34];
             for (int j = 0; j < 34; j++) {
                 double t = Double.valueOf(jedis.lpop("vector"));
@@ -109,7 +86,9 @@ public class OutlierDetectionTopology {
         if (conf == null) {
             throw new RuntimeException("cannot find conf file " + args[1]);
         }
-
+        TestRedis.add("type", "od");
+        TestRedis.add("rebalance","0");
+        TestRedis.add("time", String.valueOf(0));
         ResaConfig resaConfig = ResaConfig.create();
         resaConfig.putAll(conf);
         int checktype = Integer.valueOf((Integer) conf.get("test.shedding.or.not"));
@@ -134,7 +113,7 @@ public class OutlierDetectionTopology {
         int port = ConfigUtil.getInt(conf, "redis.port", 6379);
         String queue = (String) conf.get("redis.queue");
 
-        int defaultTaskNum = ConfigUtil.getInt(conf, "a-task.default", 1);
+        //int defaultTaskNum = ConfigUtil.getInt(conf, "a-task.default", 1);
         //set spout
         int objectCount = ConfigUtil.getIntThrow(conf, "a-spout.object.size");
         builder.setSpout("objectSpout2",
@@ -150,7 +129,7 @@ public class OutlierDetectionTopology {
 
         builder.setBolt("projection",
                 new ProjectionSleep(new ArrayList<>(randVectors), () -> (long) (-Math.log(Math.random()) * 1000.0 / projection_mu)), ConfigUtil.getInt(conf, "a-projection.parallelism", 1))
-                .setNumTasks(defaultTaskNum)
+                .setNumTasks(ConfigUtil.getInt(conf, "od.projection.tasks", 1))
                 .shuffleGrouping("objectSpout2");
 
         int minNeighborCount = ConfigUtil.getIntThrow(conf, "a-detector.neighbor.count.min");
@@ -158,12 +137,12 @@ public class OutlierDetectionTopology {
         builder.setBolt("detector",
                 new DetectorSleep(objectCount, minNeighborCount, maxNeighborDistance, () -> (long) (-Math.log(Math.random()) * 1000.0 / detector_mu)),
                 ConfigUtil.getInt(conf, "a-detector.parallelism", 1))
-                .setNumTasks(defaultTaskNum)
+                .setNumTasks(ConfigUtil.getInt(conf, "od.detector.tasks", 1))
                 .fieldsGrouping("projection", new Fields(ProjectionSleep.PROJECTION_ID_FIELD));
 
         builder.setBolt("updater",
                 new UpdaterSleep(randVectors.size(),() -> (long) (-Math.log(Math.random()) * 1000.0 / updater_mu)), ConfigUtil.getInt(conf, "a-updater.parallelism", 1))
-                .setNumTasks(defaultTaskNum)
+                .setNumTasks(ConfigUtil.getInt(conf, "od.updater.tasks", 1))
                 .fieldsGrouping("detector", new Fields(ObjectSpoutSleep.TIME_FILED, ObjectSpoutSleep.ID_FILED));
 
         if (ConfigUtil.getBoolean(conf, "a-metric.resa", true)) {
@@ -186,9 +165,7 @@ public class OutlierDetectionTopology {
        //LocalCluster localCluster  = new LocalCluster();
         //localCluster.submitTopology("111", resaConfig, builder.createTopology());
         //Utils.sleep(1000000000);
-        TestRedis.add("type", "od");
-        TestRedis.add("rebalance","0");
-        TestRedis.add("time", String.valueOf(0));
+        //
         StormSubmitter.submitTopology(args[0], resaConfig, builder.createTopology());
     }
 

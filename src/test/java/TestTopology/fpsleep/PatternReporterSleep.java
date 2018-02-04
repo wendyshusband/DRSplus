@@ -11,6 +11,7 @@ import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import resa.shedding.tools.TestRedis;
+import resa.util.ConfigUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,6 +30,10 @@ public class PatternReporterSleep extends TASleepBolt implements Constant {
 
     private OutputCollector collector;
     private Map<Integer, String> invdict;
+    private int taskid;
+    private int fixMu;
+    private String name;
+    private int tupleReceiveCount = 0;
 
     public PatternReporterSleep(IntervalSupplier sleep) {
         super(sleep);
@@ -49,11 +54,19 @@ public class PatternReporterSleep extends TASleepBolt implements Constant {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        taskid = context.getThisTaskId();
+        this.name = context.getThisComponentId();
+        String fixmuconf = "test.fixmu."+name;
+        this.fixMu = ConfigUtil.getInt(stormConf, fixmuconf, 1);
+        LOG.info("PatternReporterSleep is prepared and "+fixmuconf+" is "+fixMu);
     }
 
     @Override
     public void execute(Tuple input) {
-        super.execute(input);
+        tupleReceiveCount++;
+        if (tupleReceiveCount % fixMu == 0) {
+            super.execute(input);
+        }
         WordList wordList = (WordList) input.getValueByField(PATTERN_FIELD);
         List<String> words = IntStream.of(wordList.getWords()).mapToObj(invdict::get).collect(Collectors.toList());
         LOG.debug("In Reporter, " +System.currentTimeMillis()+ ":" + words + "," + input.getBooleanByField(IS_ADD_MFP));

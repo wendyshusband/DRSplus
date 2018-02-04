@@ -4,6 +4,8 @@ import resa.shedding.basicServices.api.AbstractTotalCost;
 import resa.shedding.basicServices.api.AllocationAndActiveShedRatios;
 import resa.shedding.basicServices.api.ICostFunction;
 
+import java.util.Map;
+
 /**
  * Created by 44931 on 2017/9/4.
  */
@@ -30,10 +32,10 @@ public class OutdetCostFunc implements ICostFunction {
     }
 
     @Override
-    public AbstractTotalCost calcCost(AllocationAndActiveShedRatios args) {
+    public AbstractTotalCost calcCost(Map conf, AllocationAndActiveShedRatios args) {
         double alloCost = args.getFixedAllocation().values().stream().mapToDouble(Number::doubleValue).sum();
         double shedCost = args.getActiveShedRatios().values().stream().mapToDouble(Number::doubleValue).sum();
         //return new OutdetCost(alloCost, powerFunc(shedCost));
-        return new OutdetCost(alloCost, powerFunc(shedCost));
+        return new OutdetCost(conf, alloCost, powerFunc(shedCost));
     }
 }

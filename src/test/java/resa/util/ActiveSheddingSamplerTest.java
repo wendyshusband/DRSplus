@@ -15,7 +15,7 @@ public class ActiveSheddingSamplerTest {
         int j = 0;
         while (j < 9) {
             rate = rate+0.1;
-            System.out.println(rate);
+            //System.out.println(rate);
             ActiveSheddingSampler sampler = new ActiveSheddingSampler(rate);
             int count = 0;
             int i=1;
@@ -31,7 +31,7 @@ public class ActiveSheddingSamplerTest {
                 }
                 i++;
             }
-            System.out.println(j+"count="+count);
+            //System.out.println(j+"count="+count);
             j++;
         }
 
@@ -65,7 +65,7 @@ public class ActiveSheddingSamplerTest {
                 }
                 i++;
             }
-            System.out.println(j+"count="+count);
+            //System.out.println(j+"count="+count);
             j++;
         }
     }
@@ -102,21 +102,21 @@ public class ActiveSheddingSamplerTest {
                 }
                 i++;
             }
-            System.out.println(j + "count=" + count);
+            //System.out.println(j + "count=" + count);
             j++;
         }
-        System.out.println(System.currentTimeMillis()-start);
+        //System.out.println(System.currentTimeMillis()-start);
     }
 
     @Test
     public void checkCase() {
         int sampledRemainder = 1;
         int notBeSampledRemainder = 1;
-        System.out.println((sampledRemainder != 0 && notBeSampledRemainder != 0) ? 1 :
-                ((sampledRemainder == 0 && notBeSampledRemainder != 0) ? 2 : (
-                        (sampledRemainder != 0 && notBeSampledRemainder == 0) ? 3 :4)));
+//        System.out.println((sampledRemainder != 0 && notBeSampledRemainder != 0) ? 1 :
+//                ((sampledRemainder == 0 && notBeSampledRemainder != 0) ? 2 : (
+//                        (sampledRemainder != 0 && notBeSampledRemainder == 0) ? 3 :4)));
 
-        System.out.println((int) (((10 - 5.6000000000000005) * 10) % 6));
-        System.out.println(0.6+-0.04);
+        //System.out.println((int) (((10 - 5.6000000000000005) * 10) % 6));
+        //System.out.println(0.6+-0.04);
     }
 }

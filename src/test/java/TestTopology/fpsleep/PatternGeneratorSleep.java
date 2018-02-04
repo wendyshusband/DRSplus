@@ -9,6 +9,7 @@ import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
+import resa.util.ConfigUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +25,10 @@ public class PatternGeneratorSleep extends TASleepBolt implements Constant {
     private Set<String> words;
     private Map<String, Integer> dict;
     private List<Integer> targetTasks;
+    private int taskid;
+    private int fixMu;
+    private String name;
+    private int tupleReceiveCount = 0;
 
     public PatternGeneratorSleep(IntervalSupplier sleep) {
         super(sleep);
@@ -45,11 +50,20 @@ public class PatternGeneratorSleep extends TASleepBolt implements Constant {
         }
         targetTasks = context.getComponentTasks("detector");
         Collections.sort(targetTasks);
+        taskid = context.getThisTaskId();
+        this.name = context.getThisComponentId();
+        String fixmuconf = "test.fixmu."+name;
+        this.fixMu = ConfigUtil.getInt(stormConf, fixmuconf, 1);
+        LOG.info("PatternGeneratorSleep is prepared and "+fixmuconf+" is "+fixMu);
 }
 
     @Override
     public void execute(Tuple input) {
-        super.execute(input);
+        tupleReceiveCount++;
+        if (tupleReceiveCount % fixMu == 0) {
+            super.execute(input);
+        }
+
         String sentence = input.getStringByField(SENTENCE_FIELD);
         StringTokenizer tokenizer = new StringTokenizer(sentence.replaceAll("\\p{P}|\\p{S}", " "));
         while (tokenizer.hasMoreTokens()) {

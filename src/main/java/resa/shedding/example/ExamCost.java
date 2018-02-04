@@ -2,13 +2,15 @@ package resa.shedding.example;
 
 import resa.shedding.basicServices.api.AbstractTotalCost;
 
+import java.util.Map;
+
 /**
  * Created by 44931 on 2017/8/7.
  */
 public class ExamCost extends AbstractTotalCost {
 
-    public ExamCost(double resourceCost, double shedCost) {
-        super(resourceCost, shedCost);
+    public ExamCost(Map conf, double resourceCost, double shedCost) {
+        super(conf, resourceCost, shedCost);
     }
 
     @Override

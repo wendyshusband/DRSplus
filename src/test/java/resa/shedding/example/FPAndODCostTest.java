@@ -12,8 +12,8 @@ public class FPAndODCostTest {
     @Test
     public void testExp() {
         for (int i = 0; i < 10; i++) {
-            double shedCost = i* 0.1;
-            double res = 1.26652722 * Math.exp(-1 * 1.81615502 * shedCost) - 0.25757112;
+            double shedCost = i* 0.11;
+            double res =  1.26652722 * Math.exp(-1 * 1.81615502 * shedCost) - 0.25757112;//od
             System.out.println(shedCost+"~"+res);
         }
     }

@@ -8,6 +8,7 @@ import resa.shedding.tools.TestRedis;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by 44931 on 2017/9/9.
@@ -225,8 +226,54 @@ public class DataCleaning {
 //        while ((s = reader.readLine()) != null) {
 //            jedis.rpush("vector", String.valueOf(Double.valueOf(s)));
 //        }
-        double maxDelay = Integer.MIN_VALUE;
-        System.out.println(maxDelay);
-        System.out.println(-Double.MIN_VALUE);
+        //double maxDelay = Integer.MIN_VALUE;
+        //System.out.println(maxDelay);
+        //System.out.println(-Double.MIN_VALUE);
+        int count = 0;
+        for (int i=0; i<1000; i++) {
+            if (i % 1 == 0) {
+                count++;
+            }
+        }
+        //System.out.println(count);
+    }
+
+    @Test
+    public void math() {
+//        for (int lambda = 1000; lambda > 0; lambda-=100) {
+//            System.out.println("~~~~~~~~~~"+lambda);
+//            long result = 0;
+//            for (int i=0; i<100000; i++) {
+//                long res = (long) (-Math.log(Math.random()) * 1000 / lambda);
+//                result += res;
+//                //System.out.print(res+"  ");
+//            }
+//            System.out.println(result);
+//
+//        }
+
+        AtomicInteger a = new AtomicInteger(10);
+        System.out.println(a.get());
+        a.set(2);
+        System.out.println(a.get());
+        int b = a.getAndIncrement();
+        System.out.println(a.get());
+        int c = a.incrementAndGet();
+        System.out.println(a.get());
+        System.out.println(b+"~"+c);
+        System.out.println(a.longValue());
+    }
+
+    @Test
+    public void gan() {
+        Integer a = 7;
+        Integer b = 3;
+        System.out.println(a/(b));
+        LinkedList as = new LinkedList();
+        as.offer(1);
+        as.offer(2);
+        System.out.println(as.size());
+        System.out.println(as.poll()+"~");
+        System.out.println(as.size());
     }
 }

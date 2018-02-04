@@ -2,6 +2,8 @@ package resa.shedding.basicServices.api;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 /**
  * Created by kailin on 2017/8/7.
  */
@@ -10,6 +12,7 @@ public abstract class AbstractTotalCost implements Comparable {
     private double resourceCost;
     private double shedCost;
     private double totalCost;
+    private Map configuration;
 
     public void setCost(double resourceCost, double shedCost) {
         this.resourceCost = resourceCost;
@@ -17,9 +20,10 @@ public abstract class AbstractTotalCost implements Comparable {
         totalCost = calcTotalCost(resourceCost, shedCost);
     }
 
-    public AbstractTotalCost(double resourceCost, double shedCost) {
+    public AbstractTotalCost(Map conf, double resourceCost, double shedCost) {
         this.resourceCost = resourceCost;
         this.shedCost = shedCost;
+        this.configuration = conf;
         totalCost = calcTotalCost(resourceCost, shedCost);
     }
 

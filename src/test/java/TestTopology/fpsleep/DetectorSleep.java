@@ -115,6 +115,11 @@ public class DetectorSleep extends TASleepBolt implements Constant {
     private OutputCollector collector;
     private List<Integer> targetTasks;
 
+    private int taskid;
+    private int fixMu;
+    private String name;
+    private int tupleReceiveCount = 0;
+
     @DefaultSerializer(DefaultSerializers.KryoSerializableSerializer.class)
     public static class PatternDB extends LinkedHashMap<WordList, Entry> implements KryoSerializable {
         private long maxKeep;
@@ -188,6 +193,11 @@ public class DetectorSleep extends TASleepBolt implements Constant {
         targetTasks = context.getComponentTasks(context.getThisComponentId());
         Collections.sort(targetTasks);
         LOG.info("In Detector, threshold: " + threshold);
+        taskid = context.getThisTaskId();
+        this.name = context.getThisComponentId();
+        String fixmuconf = "test.fixmu."+name;
+        this.fixMu = ConfigUtil.getInt(stormConf, fixmuconf, 1);
+        LOG.info("FPDetectorSleep is prepared and "+fixmuconf+" is "+fixMu);
     }
 
     /////////////////// State Transition Graph, Implementation III/////////////////////////////
@@ -215,7 +225,10 @@ public class DetectorSleep extends TASleepBolt implements Constant {
 
     @Override
     public void execute(Tuple input) {
-        super.execute(input);
+        tupleReceiveCount++;
+        if (tupleReceiveCount % fixMu == 0) {
+            super.execute(input);
+        }
         //System.out.println("zhide"+input.toString());
         //doneTODO:
         //WordList pattern = (WordList) input.getValueByField(PATTERN_FIELD);
@@ -355,7 +368,7 @@ public class DetectorSleep extends TASleepBolt implements Constant {
         }
         for (int i = 0; i < wordListForTargetTask.length; i++) {
             if (wordListForTargetTask[i] != null && wordListForTargetTask[i].size() > 0) {
-                System.out.println("hafoshabifeedback:"+targetTasks.get(i)+":"+wordListForTargetTask[i]+":"+adj);
+                //System.out.println("hafoshabifeedback:"+targetTasks.get(i)+":"+wordListForTargetTask[i]+":"+adj);
                 collector.emitDirect(
                         targetTasks.get(i),
                         FEEDBACK_STREAM,

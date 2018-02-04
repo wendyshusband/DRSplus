@@ -1,9 +1,11 @@
 package resa.shedding.basicServices.api;
 
+import java.util.Map;
+
 /**
- * Created by 44931 on 2017/8/7.
+ * Created by kailin on 2017/8/7.
  */
 public interface ICostFunction {
 
-    AbstractTotalCost calcCost(AllocationAndActiveShedRatios args);
+    AbstractTotalCost calcCost(Map conf, AllocationAndActiveShedRatios args);
 }

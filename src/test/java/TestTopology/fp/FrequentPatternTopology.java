@@ -6,6 +6,7 @@ import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.tuple.Fields;
 import resa.shedding.basicServices.SheddingResaTopologyBuilder;
 import resa.shedding.tools.TestRedis;
+import resa.topology.ResaTopologyBuilder;
 import resa.util.ConfigUtil;
 import resa.util.ResaConfig;
 
@@ -28,7 +29,19 @@ public class FrequentPatternTopology implements Constant {
         //TopologyBuilder builder = new TopologyBuilder();
         //TopologyBuilder builder = new WritableTopologyBuilder();
         //TopologyBuilder builder = new ResaTopologyBuilder();
-        TopologyBuilder builder = new SheddingResaTopologyBuilder();
+        //TopologyBuilder builder = new SheddingResaTopologyBuilder();
+        int checktype = Integer.valueOf((Integer) conf.get("test.shedding.or.not"));
+        TopologyBuilder builder = null;
+        if (checktype == 0) {
+            builder = new TopologyBuilder();
+            System.out.println("origin storm");
+        } else if (checktype == 1) {
+            builder = new ResaTopologyBuilder();
+            System.out.println("origin drs");
+        } else if (checktype == 2) {
+            builder = new SheddingResaTopologyBuilder();
+            System.out.println("shedding drs");
+        }
         int numWorkers = ConfigUtil.getInt(conf, "fp-worker.count", 1);
         resaConfig.setNumWorkers(numWorkers);
 
@@ -63,7 +76,8 @@ public class FrequentPatternTopology implements Constant {
 //        }
         //resaConfig.setDebug(true);
         TestRedis.add("type", "fp");
-        TestRedis.add("time", String.valueOf(0));
+        //TestRedis.add("time", String.valueOf(0));
+        TestRedis.add("rebalance","0");
         StormSubmitter.submitTopology(args[0], resaConfig, builder.createTopology());
         //LocalCluster localCluster = new LocalCluster();
         //localCluster.submitTopology(args[0], resaConfig, builder.createTopology());
