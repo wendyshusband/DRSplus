@@ -2,7 +2,6 @@ package resa.metrics;
 
 import org.apache.storm.Config;
 import org.apache.storm.metric.api.MultiCountMetric;
-import org.apache.storm.shade.org.apache.curator.framework.CuratorFramework;
 import org.apache.storm.shade.org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.storm.shade.org.apache.curator.framework.recipes.cache.NodeCacheListener;
 import org.apache.storm.shade.org.json.simple.JSONObject;
@@ -87,7 +86,7 @@ public final class DefaultSheddableBolt extends DelegatedBolt implements ISheddi
     private transient MultiCountMetric emitMetric;
     private transient DefaultSheddableBolt.SheddindMeasurableOutputCollector sheddindMeasurableCollector;
     private long lastMetricsSent;
-    private transient CuratorFramework client;
+    //private transient CuratorFramework client;
     private int interval;
 
     public DefaultSheddableBolt() {
@@ -134,7 +133,7 @@ public final class DefaultSheddableBolt extends DelegatedBolt implements ISheddi
             //ackFlag = Utils.getBoolean(conf.get("resa.ack.flag"),true);
             List zkServer = (List) conf.get(Config.STORM_ZOOKEEPER_SERVERS);
             int port = Utils.getInt(conf.get(Config.STORM_ZOOKEEPER_PORT));
-            client= DRSzkHandler.newClient(zkServer.get(0).toString(),port,6000,6000,1000,3);
+            //client= DRSzkHandler.newClient(zkServer.get(0).toString(),port,6000,6000,1000,3);
             JSONParser parser = new JSONParser();
             try {
                 if (!DRSzkHandler.clientIsStart()) {
@@ -308,9 +307,9 @@ public final class DefaultSheddableBolt extends DelegatedBolt implements ISheddi
             nodeCache.getListenable().addListener(new NodeCacheListener() {
 
                 public void nodeChanged() throws Exception {
-                    double shedRate = DRSzkHandler.parseActiveShedRateMap(nodeCache.getCurrentData().getData(), compID);
-                    if (shedRate != Double.MAX_VALUE && shedRate != activeSheddingRatio) {
-                        activeSheddingRatio = shedRate;
+                    double shedRatio = DRSzkHandler.parseActiveShedRateMap(nodeCache.getCurrentData().getData(), compID);
+                    if (shedRatio != Double.MAX_VALUE && shedRatio != activeSheddingRatio) {
+                        activeSheddingRatio = shedRatio;
                         activeSheddingSampler = new ActiveSheddingSampler(activeSheddingRatio);
                     }
                 }

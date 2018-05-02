@@ -386,7 +386,7 @@ public class CheckSheddingAccuracy {
     @Test
     public void readLatency() {
         List fulldata = TestWRInputFileForRedis
-                .readFileByLine("D:/passive/3platency", 100000);
+                .readFileByLine("E:/outlierdetection/2018/100/fpout/fponeaclatency1", 100000);
         String[] res1;
         String[] res2;
         ArrayList<Double> ratios = new ArrayList<>();
@@ -463,9 +463,9 @@ public class CheckSheddingAccuracy {
     @Test
     public void calcODaccuracy() {
         List fulldatas = TestWRInputFileForRedis
-                .readFileByLine("/opt/2018OD/b1", 100000);
+                .readFileByLine("E:/outlierdetection/2018/100/odout/100odonebench1", 100000);
         List sheddatas = TestWRInputFileForRedis
-                .readFileByLine("/opt/2018OD/testdata2", 100000);
+                .readFileByLine("E:/outlierdetection/2018/100/odout/100odac1", 100000);
         List nap = new ArrayList();
         nap.add("");
         fulldatas.removeAll(nap);
@@ -481,6 +481,7 @@ public class CheckSheddingAccuracy {
                 System.out.print(i+"~"+sheddatas.get(i)+"   ");
             }
         }
+        System.out.println();
         while (!fulldatas.isEmpty() || !sheddatas.isEmpty()) {
             List fulldata = new LinkedList();
             List sheddata = new LinkedList();
@@ -501,7 +502,7 @@ public class CheckSheddingAccuracy {
             } else {
                 fulldatas.clear();
             }
-            System.out.println(fulldatas.size()+"lenf"+len);
+            //System.out.println(fulldatas.size()+"lenf"+len);
             len = 0;
             for (int i=0; i<sheddatas.size(); i++) {
                 full = (String) sheddatas.get(i);
@@ -517,7 +518,7 @@ public class CheckSheddingAccuracy {
             } else {
                 sheddatas.clear();
             }
-            System.out.println("fulldata.size: "+fulldata.size()+"-----"+"sheddata.size: "+sheddata.size());
+            //System.out.println("fulldata.size: "+fulldata.size()+"-----"+"sheddata.size: "+sheddata.size());
             Iterator iteratorShed = sheddata.iterator();
             Iterator iteratorFull = fulldata.iterator();
             Map<Double, Integer> f1Result = new HashMap<>();
@@ -607,17 +608,18 @@ public class CheckSheddingAccuracy {
             }
             //r /= total;
             r /= realmap.size();
-            System.out.println("total:"+total+" f1 = "+finalResult+" precision = "+pr+" recall = "+r);
-            System.out.println("___________________________________________________________");
+            //System.out.println("total:"+total+" f1 = "+finalResult+" precision = "+pr+" recall = "+r);
+            System.out.println(finalResult);
+            //System.out.println("___________________________________________________________");
         }
     }
 
     @Test
     public void calcFPaccuracy() {
         List fulldatas = TestWRInputFileForRedis
-                .readFileByLine("/opt/2018FP/fpb1", 100000);
+                .readFileByLine("E:/outlierdetection/2018/100/fpout/fpallbench", 100000);
         List sheddatas = TestWRInputFileForRedis
-                .readFileByLine("/opt/2018FP/fp2", 100000);
+                .readFileByLine("E:/outlierdetection/2018/100/fpout/fponeac1", 100000);
         List nap = new ArrayList();
         nap.add("");
         fulldatas.removeAll(nap);
@@ -700,7 +702,8 @@ public class CheckSheddingAccuracy {
             double recall = same * 1.0 / fullTotal;
             double f1 = (2.0 * recall * precision) / (recall + precision);
             //System.out.println("same:"+same+" full:"+fullTotal+" shed:"+shedTotal);
-            System.out.println("f1:"+f1+" precision:"+precision+" recall:"+recall);
+            //System.out.println("f1:"+f1+" precision:"+precision+" recall:"+recall);
+            System.out.println(f1);
         }
     }
     @Test
@@ -711,7 +714,5 @@ public class CheckSheddingAccuracy {
 //            String t = (String) fulldatas.get(i)+"\n";
 //            TestWRInputFileForRedis.appendFile("/home/tkl/fpall",t.getBytes(),1);
 //        }
-        double res =  1.11756217 * Math.exp(-1 * 2.15941776 * 0.26) - 0.16101833;
-        System.out.println(res);
     }
 }

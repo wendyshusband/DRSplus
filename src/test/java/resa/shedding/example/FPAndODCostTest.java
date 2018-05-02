@@ -3,19 +3,17 @@ package resa.shedding.example;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class FPAndODCostTest {
     @Test
     public void testExp() {
-        for (int i = 0; i < 10; i++) {
-            double shedCost = i* 0.11;
-            double res =  1.26652722 * Math.exp(-1 * 1.81615502 * shedCost) - 0.25757112;//od
+        //for (int i = 0; i < 10; i++) {
+            double shedCost = 0.2; //i * 0.1;
+            double res =  1.11756217 * Math.exp(-1 * 2.15941776 * shedCost) - 0.16101833;//fp
+            //double res =  1.26652722 * Math.exp(-1 * 1.81615502 * shedCost) - 0.25757112;//od
             System.out.println(shedCost+"~"+res);
-        }
+        //}
     }
 
     @Test

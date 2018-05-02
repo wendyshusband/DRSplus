@@ -176,6 +176,33 @@ public class DRSzkHandler {
         decision = mkDecision;
     }
 
+    public static synchronized void sentResourceRequest(int numOfSupervisor) throws Exception {
+        if (!clientIsStart()) {
+            DRSzkHandler.start();
+        }
+        if (client.checkExists().forPath("/resource/request") == null) {
+            client.create().creatingParentsIfNeeded().forPath("/resource/request", String.valueOf(numOfSupervisor).getBytes());
+        } else {
+            client.setData().forPath("/resource/request", String.valueOf(numOfSupervisor).getBytes());
+        }
+    }
+
+    public static synchronized void sentSUBnodeIDs(List<String> nodes) throws Exception {
+
+        if (!clientIsStart()) {
+            DRSzkHandler.start();
+        }
+        if (nodes != null) {
+            if (client.checkExists().forPath("/resource/sub") == null) {
+                client.create().creatingParentsIfNeeded().forPath("/resource/sub", nodes.toString().getBytes());
+            } else {
+                client.setData().forPath("/resource/sub", nodes.toString().getBytes());
+            }
+        } else {
+            LOG.warn("active Shedding Ratio is null!");
+        }
+    }
+
 //    public static void main(String[] args) {
 //        DRSzkHandler.newClient("10.21.50.20",2181, 6000, 6000, 1000, 3).start();
 //        NodeCache nodeCache = null;
