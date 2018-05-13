@@ -12,7 +12,7 @@ target/
 hs_err_pid*
 
 #for IDEA
-.idea
+.idea/
 *.iml
 
 logs/

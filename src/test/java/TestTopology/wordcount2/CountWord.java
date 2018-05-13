@@ -93,31 +93,34 @@ public class CountWord {
     }
 
     public static void main(String[] args) throws Exception {
-        Config conf = ConfigUtil.readConfig(new File(args[1]));
-        if (conf == null) {
-            throw new RuntimeException("cannot find conf file " + args[1]);
-        }
+        Config conf = new Config();//ConfigUtil.readConfig(new File(args[1]));
+//        if (conf == null) {
+//            throw new RuntimeException("cannot find conf file " + args[1]);
+//        }
         TopologyBuilder builder = new TopologyBuilder();
-        int defaultTaskNum = ConfigUtil.getInt(conf, "defaultTaskNum", 10);
-
-        builder.setSpout("spout", new WordReader(), ConfigUtil.getInt(conf, "spout.parallelism", 1))
+        int defaultTaskNum = 4;//ConfigUtil.getInt(conf, "defaultTaskNum", 10);
+        //ConfigUtil.getInt(conf, "spout.parallelism", 1)
+        builder.setSpout("spout", new WordReader(), 1)
                 ;//.setNumTasks(3);
-        double split_mu = ConfigUtil.getDouble(conf, "split.mu", 1.0);
+        double split_mu = 200;//ConfigUtil.getDouble(conf, "split.mu", 1.0);
 
-        builder.setBolt("split", new Split(() -> (long) (-Math.log(Math.random()) * 1000.0 / split_mu)), ConfigUtil.getInt(conf, "split.parallelism", 1))
+        builder.setBolt("split", new Split(() -> (long) (-Math.log(Math.random()) * 1000.0 / split_mu)), 2)
                 .setNumTasks(defaultTaskNum)
                 .shuffleGrouping("spout");
-        double count_mu = ConfigUtil.getDouble(conf, "count.mu", 1.0);
+        double count_mu = 200;//ConfigUtil.getDouble(conf, "count.mu", 1.0);
 
-        builder.setBolt("counter", new Count(() -> (long) (-Math.log(Math.random()) * 1000.0 / count_mu)), ConfigUtil.getInt(conf, "counter.parallelism", 1))
+        builder.setBolt("counter", new Count(() -> (long) (-Math.log(Math.random()) * 1000.0 / count_mu)), 2)
                 .setNumTasks(defaultTaskNum)
                 .fieldsGrouping("split", new Fields("word"));
         builder.setBolt("out", new Output2(() -> 1L),1)
                 .setNumTasks(defaultTaskNum)
                 .shuffleGrouping("counter");
-        conf.setNumWorkers(ConfigUtil.getInt(conf, "wc-NumOfWorkers", 1));
-        conf.setDebug(ConfigUtil.getBoolean(conf, "DebugTopology", false));
-        conf.setStatsSampleRate(ConfigUtil.getDouble(conf, "StatsSampleRate", 1.0));
+        conf.setNumWorkers(2);
+        conf.setDebug(false);
+        conf.setStatsSampleRate(1.0);
+//        conf.setNumWorkers(ConfigUtil.getInt(conf, "wc-NumOfWorkers", 1));
+//        conf.setDebug(ConfigUtil.getBoolean(conf, "DebugTopology", false));
+//        conf.setStatsSampleRate(ConfigUtil.getDouble(conf, "StatsSampleRate", 1.0));
         StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
         //LocalCluster cluster = new LocalCluster();
         //cluster.submitTopology("test", conf, builder.createTopology());
