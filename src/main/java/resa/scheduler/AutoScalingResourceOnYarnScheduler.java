@@ -68,7 +68,7 @@ public class AutoScalingResourceOnYarnScheduler implements IScheduler {
         return result;
     }
 
-    public static Map<WorkerSlot, List<ExecutorDetails>> getAliveAssignedWorkerSlotExecutors(Cluster cluster, String topologyId) {
+    private static Map<WorkerSlot, List<ExecutorDetails>> getAliveAssignedWorkerSlotExecutors(Cluster cluster, String topologyId) {
         SchedulerAssignment existingAssignment = cluster.getAssignmentById(topologyId);
 //        Map<ExecutorDetails, WorkerSlot> executorToSlot = null;
 //        if (existingAssignment != null) {
@@ -97,7 +97,7 @@ public class AutoScalingResourceOnYarnScheduler implements IScheduler {
         _cluster = cluster;
         _topologies = topologies;
         LOG.info("resource state is {} ", checkResource);
-        if (checkResource || System.currentTimeMillis() - startTime > waitTime) {
+        if (checkResource) {
             List<TopologyDetails> needsSchedulingTopologies = cluster.needsSchedulingTopologies(topologies);
             //handle the bad slot and get all need slot.
             int needSlot = 0;
@@ -134,24 +134,27 @@ public class AutoScalingResourceOnYarnScheduler implements IScheduler {
                 oneSupervisorPortNumber = cluster.getAssignablePorts(cluster.getSupervisors().values().iterator().next()).size();
             }
             int allAvailableSlotNumber = availableSlots.size() + assignedWorkerSlotNumber;
-            LOG.info(allAvailableSlotNumber+"gannimabi"+needSlot+":"+assignedWorkerSlotNumber+":"+oneSupervisorPortNumber);
             if (needSlot <= allAvailableSlotNumber
                     && allAvailableSlotNumber - needSlot <= oneSupervisorPortNumber) {
-                LOG.info("whao state 1"+needSlot+":"+allAvailableSlotNumber+":"+oneSupervisorPortNumber);
+                LOG.info("state 1"+needSlot+":"+allAvailableSlotNumber+":"+oneSupervisorPortNumber);
                 doSchedlue(topologies, cluster);
                 checkResource = true;
             } else if (needSlot > allAvailableSlotNumber) {
-                LOG.info("whao state 2"+needSlot+":"+allAvailableSlotNumber+":"+oneSupervisorPortNumber);
+                LOG.info("state 2"+needSlot+":"+allAvailableSlotNumber+":"+oneSupervisorPortNumber);
                 requestYarnForADDResource(needSlot, allAvailableSlotNumber, oneSupervisorPortNumber);
                 checkResource = false;
             } else if (needSlot !=0 && allAvailableSlotNumber - needSlot > oneSupervisorPortNumber) {
-                LOG.info("whao state 3"+needSlot+":"+allAvailableSlotNumber+":"+oneSupervisorPortNumber);
+                LOG.info("state 3"+needSlot+":"+allAvailableSlotNumber+":"+oneSupervisorPortNumber);
                 requestYarnForSUBResource(needSlot, allAvailableSlotNumber, oneSupervisorPortNumber);
                 checkResource = false;
             }
             startTime = System.currentTimeMillis();
-        } else {
+        } else if (System.currentTimeMillis() - startTime <= waitTime) {
             LOG.info("waiting for resource!");
+        } else {
+            LOG.warn("Have no enough resource and wating-timeout!");
+            new DefaultScheduler().schedule(topologies,cluster);
+            checkResource = true;
         }
     }
 
@@ -230,7 +233,7 @@ public class AutoScalingResourceOnYarnScheduler implements IScheduler {
         }
     }
 
-    public LinkedList<Integer> calcExecutorAssign(int executorNum, int slotNum) {
+    private LinkedList<Integer> calcExecutorAssign(int executorNum, int slotNum) {
         LinkedList<Integer> numofExecutorToSolt = new LinkedList<>();
         int quotient = executorNum / slotNum;
         int remainder = executorNum % slotNum;
@@ -290,7 +293,7 @@ public class AutoScalingResourceOnYarnScheduler implements IScheduler {
         }
     }
 
-    public void watchYarnResponse() throws Exception {
+    private void watchYarnResponse() throws Exception {
         NodeCache nodeCache = DRSzkHandler.createNodeCache("/resource/response");
         LOG.info(" watch /resource/response"+checkResource);
         nodeCache.getListenable().addListener(new NodeCacheListener() {
@@ -301,7 +304,7 @@ public class AutoScalingResourceOnYarnScheduler implements IScheduler {
                     LOG.warn("have no enough resource! "+checkResource);
                 } else if (flag == 1) {
                     checkResource = true;
-                    LOG.info("now have enough resource! "+checkResource);
+                    LOG.info("now have enough resource! ");
 
                 }
 //                if (!checkResource && _cluster != null && _topologies != null) {
